@@ -89,7 +89,6 @@ class BurgerBuilder extends Component {
           purshas_cancel ={this.purshas_cancel_handler}
           purshas_continue = {this.purshas_continue_handler}
            />
-
         </Modal>
         <Burger ingredients={this.state.ingredients} />
         <BuildControls
