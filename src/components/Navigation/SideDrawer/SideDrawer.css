@@ -11,7 +11,7 @@
     box-sizing: border-box;
     transition: transform 0.3s ease-out;
 }
-
+/* cette condition empaiche le side drawer d'apparaitre kan on est en PC */
 @media (min-width : 500px){
     .SideDrawer{
         display: none;

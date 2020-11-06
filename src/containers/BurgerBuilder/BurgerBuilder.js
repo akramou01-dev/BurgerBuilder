@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import Aux from "../../../src/hoc/auxilary";
+import Aux from "../../../src/hoc/Auxilary/auxilary";
 import Burger from "../../components/Burger/Burger";
 import BuildControls from "../../components/Burger/BuildControls/BuildControls";
 import Modal from "../../components/UI/Modal/Modal";
 import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
+import axios from "../../axios-orders";
 
 const INGREDIENTS_PRICES = {
   salad: 0.5,
@@ -65,14 +66,33 @@ class BurgerBuilder extends Component {
     this.setState({ purshasable: sum > 0 });
   };
   purshase_handler = () => {
-    this.setState({purshasing: true});
+    this.setState({ purshasing: true });
   };
-  purshas_cancel_handler = ()=> {
-      this.setState({purshasing : false,})
-  }
-  purshas_continue_handler = ()=> {
-      alert('You continue')
-  }
+  purshas_cancel_handler = () => {
+    this.setState({ purshasing: false });
+  };
+  purshas_continue_handler = () => {
+    const order = {
+      ingredients: this.state.ingredients,
+      price: this.state.total_price,
+      customer: {
+        name: "akramou",
+        address: {
+          street: "merabet ahmed Street",
+          numero: 19,
+          Pays: "Algerie",
+        },
+        email: "test@test.com",
+      },
+      delivery_method: "fastest",
+    };
+    axios
+      .post("/orders.json", order)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+  };
   render() {
     const disabled_infos = {
       ...this.state.ingredients,
@@ -82,13 +102,16 @@ class BurgerBuilder extends Component {
     }
     return (
       <Aux>
-        <Modal show ={this.state.purshasing} modal_closed={this.purshas_cancel_handler} >
-          <OrderSummary 
-          total_price ={this.state.total_price}
-          ingredients={this.state.ingredients}
-          purshas_cancel ={this.purshas_cancel_handler}
-          purshas_continue = {this.purshas_continue_handler}
-           />
+        <Modal
+          show={this.state.purshasing}
+          modal_closed={this.purshas_cancel_handler}
+        >
+          <OrderSummary
+            total_price={this.state.total_price}
+            ingredients={this.state.ingredients}
+            purshas_cancel={this.purshas_cancel_handler}
+            purshas_continue={this.purshas_continue_handler}
+          />
         </Modal>
         <Burger ingredients={this.state.ingredients} />
         <BuildControls
@@ -97,7 +120,7 @@ class BurgerBuilder extends Component {
           disabled={disabled_infos}
           price={this.state.total_price}
           purshasable={this.state.purshasable}
-          ordered = {this.purshase_handler}
+          ordered={this.purshase_handler}
         />
       </Aux>
     );

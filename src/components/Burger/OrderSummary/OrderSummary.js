@@ -1,12 +1,16 @@
-import React from "react";
-import Aux from "../../../hoc/auxilary";
+import React , {Component}  from "react";
+import Aux from "../../../hoc/Auxilary/auxilary";
 import Button from "../../UI/Button/Button";
-const orderSummary = (props) => {
-  const ingredientSummary = Object.keys(props.ingredients).map((ingr) => {
+class OrderSummary extends Component {
+  componentWillUpdate = () => {
+    console.log('3ayitna khouya')
+  }
+  render(){
+  const ingredientSummary = Object.keys(this.props.ingredients).map((ingr) => {
     return (
       <li key={ingr}>
         <span style={{ textTransform: "capitalize" }}> {ingr} </span>:{" "}
-        {props.ingredients[ingr]}{" "}
+        {this.props.ingredients[ingr]}{" "}
       </li>
     );
   });
@@ -17,17 +21,18 @@ const orderSummary = (props) => {
       <p>A delecious Burger with the folowing ingredients:</p>
       <ul>{ingredientSummary}</ul>
       <p>
-        <strong> Total Price :{props.total_price.toFixed(2)}</strong>
+        <strong> Total Price :{this.props.total_price.toFixed(2)}</strong>
       </p>
       <p>Continue to checkout?</p>
-      <Button btn_type="Danger" clicked={props.purshas_cancel}>
+      <Button btn_type="Danger" clicked={this.props.purshas_cancel}>
         CANCEL
       </Button>
-      <Button btn_type="Success" clicked={props.purshas_continue}>
+      <Button btn_type="Success" clicked={this.props.purshas_continue}>
         CONTINUE
       </Button>
     </Aux>
   );
 };
+}
 
-export default orderSummary;
+export default OrderSummary;
