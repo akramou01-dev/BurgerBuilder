@@ -2,9 +2,9 @@ import React , {Component}  from "react";
 import Aux from "../../../hoc/Auxilary/auxilary";
 import Button from "../../UI/Button/Button";
 class OrderSummary extends Component {
-  componentWillUpdate = () => {
-    console.log('3ayitna khouya')
-  }
+  // componentWillUpdate = () => {
+  //   console.log('3ayitna khouya')
+  // }
   render(){
   const ingredientSummary = Object.keys(this.props.ingredients).map((ingr) => {
     return (
