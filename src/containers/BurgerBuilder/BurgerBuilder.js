@@ -5,8 +5,8 @@ import BuildControls from "../../components/Burger/BuildControls/BuildControls";
 import Modal from "../../components/UI/Modal/Modal";
 import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
 import axios from "../../axios-orders";
-import Spinner from '../../components/UI/Spinner/Spinner'
-import with_error_handler from '../../hoc/WithErrorHandler/WithErrorHandler'
+import Spinner from "../../components/UI/Spinner/Spinner";
+import with_error_handler from "../../hoc/WithErrorHandler/WithErrorHandler";
 
 const INGREDIENTS_PRICES = {
   salad: 0.5,
@@ -16,17 +16,25 @@ const INGREDIENTS_PRICES = {
 };
 class BurgerBuilder extends Component {
   state = {
-    ingredients: {
-      salad: 0,
-      bacon: 0,
-      cheese: 0,
-      meat: 0,
-    },
+    ingredients: null,
     total_price: 4,
     purshasable: false,
     purshasing: false,
     loading: false,
+    error: false,
   };
+
+  componentDidMount() {
+    axios
+      .get("/ingredients.json")
+      .then((response) => {
+        this.setState({ ingredients: response.data });
+      })
+      .catch((err) => {
+        this.setState({ error: true });
+        console.log(err.message);
+      });
+  }
   add_ingredient_handler = (type) => {
     const updated_count = this.state.ingredients[type] + 1;
     const updated_ingredients = {
@@ -75,7 +83,7 @@ class BurgerBuilder extends Component {
     this.setState({ purshasing: false });
   };
   purshas_continue_handler = () => {
-    this.setState({loading : true })
+    this.setState({ loading: true });
     const order = {
       ingredients: this.state.ingredients,
       price: this.state.total_price,
@@ -90,14 +98,13 @@ class BurgerBuilder extends Component {
       },
       delivery_method: "fastest",
     };
-
     axios
       .post("/orders.json", order)
       .then((res) => {
-        this.setState({loading :false, purshasing : false})
+        this.setState({ loading: false, purshasing: false });
       })
       .catch((err) => {
-        this.setState({loading :false , purshasing : false})
+        this.setState({ loading: false, purshasing: false });
       });
   };
   render() {
@@ -107,16 +114,38 @@ class BurgerBuilder extends Component {
     for (let key in disabled_infos) {
       disabled_infos[key] = disabled_infos[key] <= 0;
     }
-    let order_summary = (
-      <OrderSummary
-        total_price={this.state.total_price}
-        ingredients={this.state.ingredients}
-        purshas_cancel={this.purshas_cancel_handler}
-        purshas_continue={this.purshas_continue_handler}
-      />
+    let order_summary = null;
+    let burger = this.state.error ? (
+      <p>Ingredients can not be loaded.</p>
+    ) : (
+      <Spinner />
     );
+
+    if (this.state.ingredients) {
+      burger = (
+        <Aux>
+          <Burger ingredients={this.state.ingredients} />
+          <BuildControls
+            add_ingredient={this.add_ingredient_handler}
+            remove_ingredients={this.remove_ingredient_handler}
+            disabled={disabled_infos}
+            price={this.state.total_price}
+            purshasable={this.state.purshasable}
+            ordered={this.purshase_handler}
+          />
+        </Aux>
+      );
+      order_summary = (
+        <OrderSummary
+          total_price={this.state.total_price}
+          ingredients={this.state.ingredients}
+          purshas_cancel={this.purshas_cancel_handler}
+          purshas_continue={this.purshas_continue_handler}
+        />
+      );
+    }
     if (this.state.loading) {
-      order_summary = ( <Spinner /> );
+      order_summary = <Spinner />;
     }
     return (
       <Aux>
@@ -126,18 +155,10 @@ class BurgerBuilder extends Component {
         >
           {order_summary}
         </Modal>
-        <Burger ingredients={this.state.ingredients} />
-        <BuildControls
-          add_ingredient={this.add_ingredient_handler}
-          remove_ingredients={this.remove_ingredient_handler}
-          disabled={disabled_infos}
-          price={this.state.total_price}
-          purshasable={this.state.purshasable}
-          ordered={this.purshase_handler}
-        />
+        {burger}
       </Aux>
     );
   }
 }
 
-export default with_error_handler(BurgerBuilder,axios);
+export default with_error_handler(BurgerBuilder, axios);

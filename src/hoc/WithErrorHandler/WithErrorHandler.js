@@ -6,17 +6,30 @@ const with_error_handler = (WrappedComponent, axios) => {
     state = {
       error: null,
     };
-    componentDidMount() {
-      axios.interceptors.request.use((req) => {
+    componentWillMount() {
+      this.req_interceptor = axios.interceptors.request.use((req) => {
         this.setState({ error: null });
         return req;
       });
-      axios.interceptors.response.use(
+      
+      this.res_interceptor = axios.interceptors.response.use(
         (res) => res,
         (error) => {
           this.setState({ error: error });
         }
       );
+    }
+
+    componentWillUnmount(){
+        /**si on fait plusieurs appel pour with_error_handler alors on va crée plsrs instance pour axios 
+         * ces plsr instance vont modifier notre req et res plusieurs fois alors qu'on a besoin juste une seule fois
+         * componentWillUnmount va etre executer kan un componenet n'est pas utiliser alors c le bon endroit pour supprimer les instances
+         */
+        console.log("WILLUNMOUNNT",this.req_interceptor , this.res_interceptor)
+        axios.interceptors.request.eject(this.req_interceptor)
+        axios.interceptors.request.eject(this.res_interceptor)
+        
+
     }
     error_confirmed_handler = () => {
       this.setState({ error: null });
