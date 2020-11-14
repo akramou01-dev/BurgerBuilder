@@ -83,29 +83,43 @@ class BurgerBuilder extends Component {
     this.setState({ purshasing: false });
   };
   purshas_continue_handler = () => {
-    this.setState({ loading: true });
-    const order = {
-      ingredients: this.state.ingredients,
-      price: this.state.total_price,
-      customer: {
-        name: "akramou",
-        address: {
-          street: "merabet ahmed Street",
-          numero: 19,
-          Pays: "Algerie",
-        },
-        email: "test@test.com",
-      },
-      delivery_method: "fastest",
-    };
-    axios
-      .post("/orders.json", order)
-      .then((res) => {
-        this.setState({ loading: false, purshasing: false });
-      })
-      .catch((err) => {
-        this.setState({ loading: false, purshasing: false });
-      });
+    // this.setState({ loading: true });
+    // const order = {
+    //   ingredients: this.state.ingredients,
+    //   price: this.state.total_price,
+    //   customer: {
+    //     name: "akramou",
+    //     address: {
+    //       street: "merabet ahmed Street",
+    //       numero: 19,
+    //       Pays: "Algerie",
+    //     },
+    //     email: "test@test.com",
+    //   },
+    //   delivery_method: "fastest",
+    // };
+    // axios
+    //   .post("/orders.json", order)
+    //   .then((res) => {
+    //     this.setState({ loading: false, purshasing: false });
+    //   })
+    //   .catch((err) => {
+    //     this.setState({ loading: false, purshasing: false });
+    //   });
+
+    const query_params = [];
+    for (let i in this.state.ingredients) {
+      query_params.push(
+        encodeURIComponent(i) +
+          "=" +
+          encodeURIComponent(this.state.ingredients[i])
+      );
+    }
+    const query_string = query_params.join("&");
+    this.props.history.push({
+      pathname: "/checkout",
+      search: "?" + query_string,
+    });
   };
   render() {
     const disabled_infos = {
