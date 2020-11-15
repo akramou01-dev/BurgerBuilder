@@ -20,7 +20,7 @@ const order = (props) => {
           padding: "5px",
         }}
       >
-        {ig.name} ({ig.amout}){" "}
+        {ig.name} ({ig.amout})
       </span>
     );
   });
@@ -28,7 +28,7 @@ const order = (props) => {
     <div className={classes.Order}>
       <p>Ingredients: {ingredient_output} </p>
       <p>
-        Price <strong> {Number.parseFloat(props.price).toFixed(2)} </strong>(1){" "}
+        Price <strong> {Number.parseFloat(props.price).toFixed(2)} </strong>
       </p>
     </div>
   );
